@@ -1,4 +1,9 @@
 {
-    "botToken": "<Your bot token>",
-    "apiKey": "<OpenRouter api key>"
+    "connection": {
+        "botToken": "<Your bot token>",
+        "apiKey": "<OpenRouter api key>"
+    },
+    "messages": {
+        "ping": "Бот работает стабильно!"
+    }
 }

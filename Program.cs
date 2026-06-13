@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NetCord;
 using NetCord.Gateway;
+using NetCord.Logging;
 using NetCord.Services.ApplicationCommands;
 using NeuroCord.Modules;
 
@@ -11,7 +12,8 @@ var config = new ConfigurationBuilder()
 
 var discordClient = new GatewayClient(new BotToken(config["connection:botToken"]!), new GatewayClientConfiguration()
 {
-    Intents = GatewayIntents.GuildMessages
+    Intents = GatewayIntents.GuildMessages,
+    Logger = new ConsoleLogger()
 });
 
 //Комманды

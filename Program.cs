@@ -33,7 +33,7 @@ discordClient.InteractionCreate += async interaction =>
     if (interaction is not ApplicationCommandInteraction applicationCommandInteraction)
         return;
 
-    var result = await applicationCommandService.ExecuteAsync(new ApplicationCommandContext(applicationCommandInteraction, discordClient));
+    var result = await applicationCommandService.ExecuteAsync(new ApplicationCommandContext(applicationCommandInteraction, discordClient), serviceProvider);
 
     if (result is not IFailResult failResult)
         return;

@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NetCord;
 using NetCord.Gateway;
 using NetCord.Services.ApplicationCommands;
+using NeuroCord.Modules;
 
 var config = new ConfigurationBuilder()
     .AddJsonFile(Directory.GetCurrentDirectory() + "/settings.json", optional: false)
@@ -15,7 +16,7 @@ var discordClient = new GatewayClient(new BotToken(config["connection:botToken"]
 
 //Комманды
 ApplicationCommandService<ApplicationCommandContext> applicationCommandService = new();
-applicationCommandService.AddModules(typeof(Program).Assembly);
+applicationCommandService.AddModules(typeof(DefaultCommandModule).Assembly);
 await applicationCommandService.RegisterCommandsAsync(discordClient.Rest, discordClient.Id);
 
 //Регистрируем сервисы

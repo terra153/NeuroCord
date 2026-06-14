@@ -78,11 +78,12 @@ discordClient.MessageCreate += async message =>
         var _neuro = serviceProvider.GetRequiredService<INeuroService>();
 
         NetCord.Rest.MessageProperties messageProps = config.Messages.Typing;
-        await discordClient.Rest.SendMessageAsync(config.Settings.DefaultChannelId, messageProps);
+        var typingMessage = await discordClient.Rest.SendMessageAsync(config.Settings.DefaultChannelId, messageProps);
 
         var answer = await _neuro.AskNeuro(message.Content, message.Author.GlobalName ?? "Неизвестно");
 
         await message.ReplyAsync(answer);
+        await typingMessage.DeleteAsync();
     }
 };
 discordClient.InteractionCreate += async interaction =>

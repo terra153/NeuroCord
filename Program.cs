@@ -6,12 +6,16 @@ using NetCord.Logging;
 using NetCord.Rest;
 using NetCord.Services;
 using NetCord.Services.ApplicationCommands;
+using NeuroCord.Models;
 using NeuroCord.Modules;
 using NeuroCord.Services;
+using Newtonsoft.Json;
 
 var config = new ConfigurationBuilder()
     .AddJsonFile(Directory.GetCurrentDirectory() + "/settings.json", optional: false)
     .Build();
+string settingsString = await File.ReadAllTextAsync(Directory.GetCurrentDirectory() + "/settings.json");
+var settings = JsonConvert.DeserializeObject<Settings>(settingsString)!;
 
 var discordClient = new GatewayClient(new BotToken(config["connection:botToken"]!), new GatewayClientConfiguration()
 {
@@ -27,9 +31,11 @@ await applicationCommandService.RegisterCommandsAsync(discordClient.Rest, discor
 //Регистрируем сервисы
 var services = new ServiceCollection();
 services.AddSingleton(config);
+//Синглтон для сохранения контекста диалога
 services.AddSingleton<INeuroService, NeuroService>();
 var serviceProvider = services.BuildServiceProvider();
 
+//События
 discordClient.InteractionCreate += async interaction =>
 {
     if (interaction is not ApplicationCommandInteraction applicationCommandInteraction)
@@ -48,6 +54,12 @@ discordClient.InteractionCreate += async interaction =>
     {
     }
 };
+discordClient.Ready += async args =>
+{
+    NetCord.Rest.MessageProperties messageProps = config["messages:hello"]!;
 
+    await discordClient.Rest.SendMessageAsync(settings.DefaultChannelId, messageProps);
+};
 await discordClient.StartAsync();
+
 await Task.Delay(-1);

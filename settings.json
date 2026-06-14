@@ -6,10 +6,18 @@
     "messages": {
         "ping": "Бот работает стабильно!",
         "resetContext": "Контекст диалога сброшен!",
-        "apiError": "Произошла ошибка в api:"
+        "apiError": "Произошла ошибка в api:",
+        "hello": "Бот работает!",
+        "typing": "Печатает..."
     },
     "neuro": {
         "model": "google/gemini-2.5-flash",
         "prompt": "<Промпт для нейросети>"
+    },
+    "settings": {
+        "defaultChannelId": 12345,
+        "fullServerMode": false,
+        "ignoreOtherBots": true,
+        "ignoreUserIds": []
     }
 }

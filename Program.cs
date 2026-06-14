@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 var configuration = new ConfigurationBuilder()
     .SetBasePath(Directory.GetCurrentDirectory())
-    .AddJsonFile("/settings.json", optional: false)
+    .AddJsonFile("settings.json", optional: false)
     .Build();
 
 Configuration? config = configuration.GetSection("configuration").Get<Configuration>();

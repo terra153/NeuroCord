@@ -11,13 +11,17 @@ using NeuroCord.Modules;
 using NeuroCord.Services;
 using Newtonsoft.Json;
 
-var config = new ConfigurationBuilder()
-    .AddJsonFile(Directory.GetCurrentDirectory() + "/settings.json", optional: false)
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("/settings.json", optional: false)
     .Build();
-string settingsString = await File.ReadAllTextAsync(Directory.GetCurrentDirectory() + "/settings.json");
-var settings = JsonConvert.DeserializeObject<Settings>(settingsString)!;
 
-var discordClient = new GatewayClient(new BotToken(config["connection:botToken"]!), new GatewayClientConfiguration()
+Configuration? config = configuration.GetSection("configuration").Get<Configuration>();
+
+if (config == null)
+    throw new Exception("Couldn't read configuration file");
+
+var discordClient = new GatewayClient(new BotToken(config.Connection.BotToken), new GatewayClientConfiguration()
 {
     Intents = GatewayIntents.GuildMessages,
     Logger = new ConsoleLogger()
@@ -36,6 +40,31 @@ services.AddSingleton<INeuroService, NeuroService>();
 var serviceProvider = services.BuildServiceProvider();
 
 //События
+// discordClient.MessageCreate += async message =>
+// {
+//     // if (message.Author.Id == 1376943080321716456)
+//     // {
+//     //     return;
+//     // }
+
+//     if (message!.Content == "Печатаю...") return;
+
+//     if (fullServerMode)
+//     {
+//         Console.WriteLine("FullServer Сырник спрашивает: " + text!.Content);
+//         NeuroService.AskNeuro(message, text!.Content!);
+//     }
+//     else if (message.ChannelId == Consts.DEFAULT_CHANNEL)
+//     {
+//         Console.WriteLine("MyChannelOnly Сырник спрашивает: " + text!.Content);
+//         NeuroService.AskNeuro(message, text!.Content!);
+//     }
+//     else
+//     {
+//         Console.WriteLine("Меня этот канал не касается");
+//     }
+//     return;
+// };
 discordClient.InteractionCreate += async interaction =>
 {
     if (interaction is not ApplicationCommandInteraction applicationCommandInteraction)
@@ -56,9 +85,9 @@ discordClient.InteractionCreate += async interaction =>
 };
 discordClient.Ready += async args =>
 {
-    NetCord.Rest.MessageProperties messageProps = config["messages:hello"]!;
+    NetCord.Rest.MessageProperties messageProps = config.Messages.Hello!;
 
-    await discordClient.Rest.SendMessageAsync(settings.DefaultChannelId, messageProps);
+    await discordClient.Rest.SendMessageAsync(config.Settings.DefaultChannelId, messageProps);
 };
 await discordClient.StartAsync();
 

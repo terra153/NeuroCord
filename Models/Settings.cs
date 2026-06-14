@@ -8,13 +8,9 @@ namespace NeuroCord.Models
 {
     public class Settings
     {
-        [JsonProperty("settings:defaultChannelId")]
-        public ulong DefaultChannelId;
-        [JsonProperty("settings:fullServerMode")]
-        public bool FullServerMode = false;
-        [JsonProperty("settings:ignoreOtherBots")]
-        public bool IgnoreOtherBots = true;
-        [JsonProperty("settings:ignoreUserIds")]
-        public ulong[] IgnoreUserIds = [];
+        public ulong DefaultChannelId { get; set; }
+        public bool FullServerMode { get; set; } = false;
+        public bool IgnoreOtherBots { get; set; } = true;
+        public ulong[] IgnoreUserIds { get; set; } = [];
     }
 }

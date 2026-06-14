@@ -7,6 +7,7 @@ using NetCord.Rest;
 using NetCord.Services;
 using NetCord.Services.ApplicationCommands;
 using NeuroCord.Modules;
+using NeuroCord.Services;
 
 var config = new ConfigurationBuilder()
     .AddJsonFile(Directory.GetCurrentDirectory() + "/settings.json", optional: false)
@@ -26,6 +27,7 @@ await applicationCommandService.RegisterCommandsAsync(discordClient.Rest, discor
 //Регистрируем сервисы
 var services = new ServiceCollection();
 services.AddSingleton(config);
+services.AddSingleton<INeuroService, NeuroService>();
 var serviceProvider = services.BuildServiceProvider();
 
 discordClient.InteractionCreate += async interaction =>

@@ -19,7 +19,9 @@
             "defaultChannelId": 12345,
             "fullServerMode": false,
             "ignoreOtherBots": true,
-            "ignoreUserIds": []
+            "answerAllMessages": false, //If false - bot will answer only to reply or messages that mentions bot
+            "ignoreUserIds": [],
+            "ignoreMessages": []
         }
     }
 }

@@ -23,9 +23,10 @@ if (config == null)
 
 var discordClient = new GatewayClient(new BotToken(config.Connection.BotToken), new GatewayClientConfiguration()
 {
-    Intents = GatewayIntents.GuildMessages,
+    Intents = GatewayIntents.GuildMessages | GatewayIntents.MessageContent,
     Logger = new ConsoleLogger()
 });
+ulong botId = 0;
 
 //Комманды
 ApplicationCommandService<ApplicationCommandContext> applicationCommandService = new();
@@ -40,31 +41,38 @@ services.AddSingleton<INeuroService, NeuroService>();
 var serviceProvider = services.BuildServiceProvider();
 
 //События
-// discordClient.MessageCreate += async message =>
-// {
-//     // if (message.Author.Id == 1376943080321716456)
-//     // {
-//     //     return;
-//     // }
+discordClient.MessageCreate += async message =>
+{
+    //Игнорируемые пользователи
+    if (config.Settings.IgnoreUserIds.Contains(message.Author.Id))
+        return;
 
-//     if (message!.Content == "Печатаю...") return;
+    //Игнорируемые сообщения
+    if (config.Settings.IgnoreMessages.Contains(message.Content))
+        return;
 
-//     if (fullServerMode)
-//     {
-//         Console.WriteLine("FullServer Сырник спрашивает: " + text!.Content);
-//         NeuroService.AskNeuro(message, text!.Content!);
-//     }
-//     else if (message.ChannelId == Consts.DEFAULT_CHANNEL)
-//     {
-//         Console.WriteLine("MyChannelOnly Сырник спрашивает: " + text!.Content);
-//         NeuroService.AskNeuro(message, text!.Content!);
-//     }
-//     else
-//     {
-//         Console.WriteLine("Меня этот канал не касается");
-//     }
-//     return;
-// };
+    //Не отвечать самому себе
+    if (message.Author.Id == botId)
+        return;
+
+    //Игнорирование ботов
+    if (config.Settings.IgnoreOtherBots && message.Author.IsBot)
+        return;
+
+    //Проверка ответа на все сообщения
+    if (!config.Settings.AnswerAllMessages)
+    {
+        //Если не упоминается бот
+        if (!message.MentionedUsers.Any(us => us.Id == botId))
+            return;
+
+        //Если нет reply боту
+        if (message.ReferencedMessage != null &&
+            message.ReferencedMessage.Author.Id != botId)
+            return;
+
+    }
+};
 discordClient.InteractionCreate += async interaction =>
 {
     if (interaction is not ApplicationCommandInteraction applicationCommandInteraction)
@@ -85,6 +93,8 @@ discordClient.InteractionCreate += async interaction =>
 };
 discordClient.Ready += async args =>
 {
+    botId = args.User.Id;
+
     NetCord.Rest.MessageProperties messageProps = config.Messages.Hello!;
 
     await discordClient.Rest.SendMessageAsync(config.Settings.DefaultChannelId, messageProps);

@@ -21,7 +21,7 @@ var discordClient = new GatewayClient(new BotToken(config["connection:botToken"]
 
 //Комманды
 ApplicationCommandService<ApplicationCommandContext> applicationCommandService = new();
-applicationCommandService.AddModules(typeof(DefaultCommandModule).Assembly);
+applicationCommandService.AddModules(typeof(SlashCommandModule).Assembly);
 await applicationCommandService.RegisterCommandsAsync(discordClient.Rest, discordClient.Id);
 
 //Регистрируем сервисы

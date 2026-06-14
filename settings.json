@@ -1,14 +1,15 @@
 {
     "connection": {
-        "botToken": "<Бот токен с discord dev портала>",
+        "botToken": "<Discord бот токен>",
         "apiKey": "<OpenRouter api ключ>"
     },
     "messages": {
         "ping": "Бот работает стабильно!",
+        "resetContext": "Контекст диалога сброшен!",
         "apiError": "Произошла ошибка в api:"
     },
     "neuro": {
         "model": "google/gemini-2.5-flash",
-        "prompt": "<промпт для нейросети>"
+        "prompt": "<Промпт для нейросети>"
     }
 }

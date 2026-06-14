@@ -31,7 +31,7 @@ namespace NeuroCord.Services
 
         public void ResetContext()
         {
-            //Если переинициализировать клиенть - контекст сбросится
+            //Если переинициализировать клиент - контекст сбросится
             apiClient = new(apiUrl: "https://openrouter.ai/api/v1/chat/completions",
                             apiToken: config["connection:apiKey"]!);
         }

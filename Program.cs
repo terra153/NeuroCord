@@ -70,7 +70,19 @@ discordClient.MessageCreate += async message =>
         if (message.ReferencedMessage != null &&
             message.ReferencedMessage.Author.Id != botId)
             return;
+    }
 
+    if (config.Settings.FullServerMode
+    || message.ChannelId == config.Settings.DefaultChannelId)
+    {
+        var _neuro = serviceProvider.GetRequiredService<INeuroService>();
+
+        NetCord.Rest.MessageProperties messageProps = config.Messages.Typing;
+        await discordClient.Rest.SendMessageAsync(config.Settings.DefaultChannelId, messageProps);
+
+        var answer = await _neuro.AskNeuro(message.Content, message.Author.GlobalName ?? "Неизвестно");
+
+        await message.ReplyAsync(answer);
     }
 };
 discordClient.InteractionCreate += async interaction =>
@@ -95,7 +107,7 @@ discordClient.Ready += async args =>
 {
     botId = args.User.Id;
 
-    NetCord.Rest.MessageProperties messageProps = config.Messages.Hello!;
+    NetCord.Rest.MessageProperties messageProps = config.Messages.Hello;
 
     await discordClient.Rest.SendMessageAsync(config.Settings.DefaultChannelId, messageProps);
 };
